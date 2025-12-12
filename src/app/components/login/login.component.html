@@ -1,0 +1,24 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Connexion</h1>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Entrez votre email"
+          class="form-control"
+        />
+        <div class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Email invalide</span>
+        </div>
+      </div>
+      <button type="submit" [disabled]="loginForm.invalid" class="btn-primary">
+        Se connecter
+      </button>
+    </form>
+  </div>
+</div>

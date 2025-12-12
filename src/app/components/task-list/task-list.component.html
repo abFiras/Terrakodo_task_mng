@@ -1,0 +1,121 @@
+<div class="task-container">
+  <header class="header">
+    <h1>Mes Tâches</h1>
+    <div class="header-actions">
+      <span class="user-email">{{ currentUser$ | async }}</span>
+      <button (click)="logout()" class="btn-logout">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="actions-bar">
+      <button (click)="toggleAddForm()" class="btn-add">
+        {{ showAddForm ? 'Annuler' : '+ Nouvelle tâche' }}
+      </button>
+    </div>
+
+    <app-task-form 
+      *ngIf="showAddForm"
+      [task]="editingTask"
+      (taskSaved)="editingTask ? onTaskUpdated() : onTaskAdded()"
+      (cancelled)="showAddForm = false; editingTask = null"
+    ></app-task-form>
+
+    <div class="tasks-section">
+      <h2>Tâches en cours</h2>
+      <div class="tasks-grid">
+        <div 
+          *ngFor="let task of activeTasks$ | async" 
+          class="task-card"
+        >
+          <div class="task-header">
+            <h3>{{ task.title }}</h3>
+            <span [class]="'priority-badge ' + getPriorityClass(task.priority)">
+              {{ getPriorityLabel(task.priority) }}
+            </span>
+          </div>
+          
+          <p class="task-description">{{ task.description }}</p>
+          
+          <div class="task-footer">
+            <span class="due-date">
+              📅 {{ task.dueDate | date:'dd/MM/yyyy' }}
+            </span>
+            <div class="task-actions">
+              <button 
+                (click)="onToggleComplete(task.id)" 
+                class="btn-icon btn-complete"
+                title="Marquer comme terminée"
+              >
+                ✓
+              </button>
+              <button 
+                (click)="onEditTask(task)" 
+                class="btn-icon btn-edit"
+                title="Modifier"
+              >
+                ✎
+              </button>
+              <button 
+                (click)="onDeleteTask(task.id)" 
+                class="btn-icon btn-delete"
+                title="Supprimer"
+              >
+                🗑
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <p *ngIf="(activeTasks$ | async)?.length === 0" class="no-tasks">
+        Aucune tâche en cours
+      </p>
+    </div>
+
+    <div class="tasks-section">
+      <h2>Tâches terminées</h2>
+      <div class="tasks-grid">
+        <div 
+          *ngFor="let task of completedTasks$ | async" 
+          class="task-card completed"
+        >
+          <div class="task-header">
+            <h3>{{ task.title }}</h3>
+            <span [class]="'priority-badge ' + getPriorityClass(task.priority)">
+              {{ getPriorityLabel(task.priority) }}
+            </span>
+          </div>
+          
+          <p class="task-description">{{ task.description }}</p>
+          
+          <div class="task-footer">
+            <span class="due-date">
+              📅 {{ task.dueDate | date:'dd/MM/yyyy' }}
+            </span>
+            <div class="task-actions">
+              <button 
+                (click)="onToggleComplete(task.id)" 
+                class="btn-icon btn-undo"
+                title="Réactiver"
+              >
+                ↺
+              </button>
+              <button 
+                (click)="onDeleteTask(task.id)" 
+                class="btn-icon btn-delete"
+                title="Supprimer"
+              >
+                🗑
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <p *ngIf="(completedTasks$ | async)?.length === 0" class="no-tasks">
+        Aucune tâche terminée
+      </p>
+    </div>
+  </div>
+</div>
